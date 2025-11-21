@@ -2,96 +2,64 @@
 @{
     Layout = "_Layout";
 }
-<h3>Lecturer - Submit Monthly Claim</h3>
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="SubmitClaim" method="post" enctype="multipart/form-data">
+<h3>Academic Manager - Claim Review & Final Approval</h3>
+<table class="table table-hover">
+    <thead>
+        <tr>
+            <th>Claim ID</th>
+            <th>Lecturer</th>
+            <th>Hours</th>
+            <th>Rate</th>
+            <th>Total</th> 
+            <th>Notes</th>
+            <th>File</th>
+            <th>Status</th>
+            <th>Date</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
 
-            <div class="mb-2">
-                <label>Hours Worked</label>
-                <input name="hoursWorked" type="number" step="0.01" class="form-control" required />
-            </div>
+    <tbody>
+        @foreach (var c in Model)
+        {
+            <tr>
+                <td>@c.ClaimId</td>
+                <td>@c.LecturerUsername</td>
+                <td>@c.HoursWorked</td>
+                <td>@c.HourlyRate</td>
 
-            <div class="mb-2">
-                <label>Hourly Rate</label>
-                <input name="hourlyRate" type="number" step="0.01" class="form-control" required />
-            </div>
+                <!-- NEW TOTAL COLUMN -->
+                <td>@c.TotalAmount.ToString("F2")</td>
 
-            <div class="mb-2">
-                <label><strong>Total Payment (Auto-Calculated)</strong></label>
-                <div class="form-control bg-light">R <span id="totalDisplay">0.00</span></div>
-            </div>
+                <td>@(string.IsNullOrWhiteSpace(c.Notes) ? "-" : c.Notes)</td>
 
-            <div class="mb-2">
-                <label>Notes</label>
-                <textarea name="notes" class="form-control" rows="3"></textarea>
-            </div>
+                <td>
+                    @if (!string.IsNullOrWhiteSpace(c.FileName))
+                    {
+                        <a class="btn btn-sm btn-outline-primary" href="/AcademicManager/Download/@c.ClaimId">Open</a>
+                    }
+                    else
+                    {
+                        <span class="text-muted">No file</span>
+                    }
+                </td>
 
-            <div class="mb-2">
-                <label>Supporting Document</label>
-                <input name="supportingFile" type="file" class="form-control" accept=".pdf,.docx,.xlsx" />
-            </div>
+                <td>@c.Status</td>
 
-            <button class="btn btn-success">Submit Claim</button>
-        </form>
-    </div>
+                <td>@(c.DateSubmitted == DateTime.MinValue ? "" : c.DateSubmitted.ToString("g"))</td>
 
-    <div class="col-md-8">
-        <h4>Your Claims</h4>
-        <table class="table table-bordered">
-            <thead>
-                <tr>
-                    <th>Claim ID</th>
-                    <th>Hours</th>
-                    <th>Rate</th>
-                    <th>Total</th> <!-- NEW COLUMN -->
-                    <th>Status</th>
-                    <th>Date</th>
-                    <th>File</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var item in Model)
-                {
-                    <tr>
-                        <td>@item.ClaimId</td>
-                        <td>@item.HoursWorked</td>
-                        <td>@item.HourlyRate</td>
-                        <td>@item.TotalAmount.ToString("F2")</td> <!-- NEW -->
-                        <td>@item.Status</td>
-                        <td>@(item.DateSubmitted == DateTime.MinValue ? "" : item.DateSubmitted.ToString("g"))</td>
-                        <td>
-                            @if (!string.IsNullOrWhiteSpace(item.FileName))
-                            {
-                                <a class="btn btn-sm btn-outline-primary" href="/Lecturer/Download/@item.ClaimId">Open</a>
-                            }
-                            else
-                            {
-                                <span class="text-muted">No file</span>
-                            }
-                        </td>
-                    </tr>
-                }
-            </tbody>
-        </table>
-    </div>
-</div>
+                <td>
+                    <form method="post" asp-action="FinalApprove" class="d-inline">
+                        <input type="hidden" name="id" value="@c.ClaimId" />
+                        <button class="btn btn-sm btn-success">Final Approve</button>
+                    </form>
 
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
-<script>
-    $(document).ready(function () {
-
-        function calculateTotal() {
-            let hours = parseFloat($("input[name='hoursWorked']").val()) || 0;
-            let rate = parseFloat($("input[name='hourlyRate']").val()) || 0;
-            let result = hours * rate;
-            $("#totalDisplay").text(result.toFixed(2));
+                    <form method="post" asp-action="Reject" class="d-inline ma-1">
+                        <input type="hidden" name="id" value="@c.ClaimId" />
+                        <button class="btn btn-sm btn-danger">Reject</button>
+                    </form>
+                </td>
+            </tr>
         }
-
-        $("input[name='hoursWorked'], input[name='hourlyRate']").on("input", function () {
-            calculateTotal();
-        });
-
-    });
-</script>
+    </tbody>
+</table>
