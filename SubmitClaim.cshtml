@@ -1,0 +1,24 @@
+﻿ @{
+	Layout = "_Layout";
+ }
+
+ <h3>Submit Claim (Separate Page)</h3>
+ <form asp-action="SubmitClaim" method="post" enctype="multipart/form-data">
+		<div class="mb-2">
+			<label>Hours Worked</label>
+			<input name="hoursWorked" type="number" step="0.01" class="form-control" required />
+		</div>
+		<div class="mb-2">
+			<label>Hourly Rate</label>
+			<input name="hourlyRate" type="number" step="0.01" class="form-control" required />
+		</div>
+		<div class="mb-2">
+			<label>Notes</label>
+			<textarea name="notes" class="form-control"></textarea>
+		</div>
+		<div class="mb-2">
+			<label>Supporting Document</label>
+			<input name="supportingFile" type="file" class="form-control" accept=".pdf,.docx,.xlsx" />
+		</div>
+	<button class="btn btn-success">Submit</button>
+</form>

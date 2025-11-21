@@ -1,0 +1,97 @@
+﻿@model IEnumerable<POE_CMCS_Mvc.Models.ClaimModel>
+@{
+    Layout = "_Layout";
+}
+<h3>Lecturer - Submit Monthly Claim</h3>
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="SubmitClaim" method="post" enctype="multipart/form-data">
+
+            <div class="mb-2">
+                <label>Hours Worked</label>
+                <input name="hoursWorked" type="number" step="0.01" class="form-control" required />
+            </div>
+
+            <div class="mb-2">
+                <label>Hourly Rate</label>
+                <input name="hourlyRate" type="number" step="0.01" class="form-control" required />
+            </div>
+
+            <div class="mb-2">
+                <label><strong>Total Payment (Auto-Calculated)</strong></label>
+                <div class="form-control bg-light">R <span id="totalDisplay">0.00</span></div>
+            </div>
+
+            <div class="mb-2">
+                <label>Notes</label>
+                <textarea name="notes" class="form-control" rows="3"></textarea>
+            </div>
+
+            <div class="mb-2">
+                <label>Supporting Document</label>
+                <input name="supportingFile" type="file" class="form-control" accept=".pdf,.docx,.xlsx" />
+            </div>
+
+            <button class="btn btn-success">Submit Claim</button>
+        </form>
+    </div>
+
+    <div class="col-md-8">
+        <h4>Your Claims</h4>
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Claim ID</th>
+                    <th>Hours</th>
+                    <th>Rate</th>
+                    <th>Total</th> <!-- NEW COLUMN -->
+                    <th>Status</th>
+                    <th>Date</th>
+                    <th>File</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@item.ClaimId</td>
+                        <td>@item.HoursWorked</td>
+                        <td>@item.HourlyRate</td>
+                        <td>@item.TotalAmount.ToString("F2")</td> <!-- NEW -->
+                        <td>@item.Status</td>
+                        <td>@(item.DateSubmitted == DateTime.MinValue ? "" : item.DateSubmitted.ToString("g"))</td>
+                        <td>
+                            @if (!string.IsNullOrWhiteSpace(item.FileName))
+                            {
+                                <a class="btn btn-sm btn-outline-primary" href="/Lecturer/Download/@item.ClaimId">Open</a>
+                            }
+                            else
+                            {
+                                <span class="text-muted">No file</span>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script>
+    $(document).ready(function () {
+
+        function calculateTotal() {
+            let hours = parseFloat($("input[name='hoursWorked']").val()) || 0;
+            let rate = parseFloat($("input[name='hourlyRate']").val()) || 0;
+            let result = hours * rate;
+            $("#totalDisplay").text(result.toFixed(2));
+        }
+
+        $("input[name='hoursWorked'], input[name='hourlyRate']").on("input", function () {
+            calculateTotal();
+        });
+
+    });
+</script>
