@@ -1,0 +1,31 @@
+﻿@{
+}
+    Layout = "_Layout";
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <h3 class="mb-3">POE CMCS - Login</h3>
+        <form method="post" asp-action="Login">
+            <div class="mb-3">
+                <label class="form-label">Username</label>
+                <input name="username" class="form-control" />
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Password</label>
+                <input name="password" type="password" class="form-control" />
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Select Role</label>
+                <select name="selectedRole" class="form-control">
+                    <option>Lecturer</option>
+                    <option>Programme Coordinator</option>
+                    <option>Academic Manager</option>
+                </select>
+            </div>
+            <button class="btn btn-primary">Login</button>
+        </form>
+        @if (ViewBag.Error != null)
+        {
+            <div class="mt-3 text-danger">@ViewBag.Error</div>
+        }
+    </div>
+</div>
