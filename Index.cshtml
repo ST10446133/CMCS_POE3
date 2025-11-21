@@ -1,59 +1,37 @@
-﻿@model IEnumerable<POE_CMCS_Mvc.Models.ClaimModel>
+﻿@model System.Data.DataTable
 @{
-    Layout = "_Layout";
+    ViewData["Title"] = "HR Dashboard - Approved Claims";
 }
-<h3>Programme Coordinator - Manage Claims</h3>
-<table class="table table-striped">
+
+<h2>Approved Claims</h2>
+
+<form method="post" asp-action="ExportCsv">
+    <button class="btn btn-primary">Export Payment Report (CSV)</button>
+</form>
+
+<table class="table table-bordered table-striped mt-3">
     <thead>
         <tr>
             <th>Claim ID</th>
             <th>Lecturer</th>
+            <th>Module</th>
             <th>Hours</th>
             <th>Rate</th>
-            <th>Total</th> 
-            <th>Notes</th>
-            <th>File</th>
-            <th>Status</th>
-            <th>Date</th>
-            <th>Actions</th>
+            <th>Total Amount</th>
+            <th>Date Submitted</th>
         </tr>
     </thead>
     <tbody>
-        @foreach (var c in Model)
+        @foreach (System.Data.DataRow row in Model.Rows)
         {
             <tr>
-                <td>@c.ClaimId</td>
-                <td>@c.LecturerUsername</td>
-                <td>@c.HoursWorked</td>
-                <td>@c.HourlyRate</td>
-
-                <!-- NEW TOTAL COLUMN -->
-                <td>@c.TotalAmount.ToString("F2")</td>
-
-                <td>@(string.IsNullOrWhiteSpace(c.Notes) ? "-" : c.Notes)</td>
-                <td>
-                    @if (!string.IsNullOrWhiteSpace(c.FileName))
-                    {
-                        <a class="btn btn-sm btn-outline-primary" href="/ProgrammeCoordinator/Download/@c.ClaimId">Open</a>
-                    }
-                    else
-                    {
-                        <span class="text-muted">No file</span>
-                    }
-                </td>
-                <td>@c.Status</td>
-                <td>@(c.DateSubmitted == DateTime.MinValue ? "" : c.DateSubmitted.ToString("g"))</td>
-                <td>
-                    <form method="post" asp-action="Approve" class="d-inline">
-                        <input type="hidden" name="id" value="@c.ClaimId" />
-                        <button class="btn btn-sm btn-success">Approve</button>
-                    </form>
-
-                    <form method="post" asp-action="Reject" class="d-inline ma-1">
-                        <input type="hidden" name="id" value="@c.ClaimId" />
-                        <button class="btn btn-sm btn-danger">Reject</button>
-                    </form>
-                </td>
+                <td>@row["ClaimId"]</td>
+                <td>@row["LecturerUsername"]</td>
+                <td>@row["ModuleName"]</td>
+                <td>@row["HoursWorked"]</td>
+                <td>@row["HourlyRate"]</td>
+                <td>@row["TotalAmount"]</td>
+                <td>@row["DateSubmitted"]</td>
             </tr>
         }
     </tbody>
