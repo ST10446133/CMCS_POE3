@@ -2,8 +2,8 @@
 @{
     Layout = "_Layout";
 }
-<h3>Academic Manager - Claim Review & Final Approval</h3>
-<table class="table table-hover">
+<h3>Programme Coordinator - Manage Claims</h3>
+<table class="table table-striped">
     <thead>
         <tr>
             <th>Claim ID</th>
@@ -18,7 +18,6 @@
             <th>Actions</th>
         </tr>
     </thead>
-
     <tbody>
         @foreach (var c in Model)
         {
@@ -32,26 +31,22 @@
                 <td>@c.TotalAmount.ToString("F2")</td>
 
                 <td>@(string.IsNullOrWhiteSpace(c.Notes) ? "-" : c.Notes)</td>
-
                 <td>
                     @if (!string.IsNullOrWhiteSpace(c.FileName))
                     {
-                        <a class="btn btn-sm btn-outline-primary" href="/AcademicManager/Download/@c.ClaimId">Open</a>
+                        <a class="btn btn-sm btn-outline-primary" href="/ProgrammeCoordinator/Download/@c.ClaimId">Open</a>
                     }
                     else
                     {
                         <span class="text-muted">No file</span>
                     }
                 </td>
-
                 <td>@c.Status</td>
-
                 <td>@(c.DateSubmitted == DateTime.MinValue ? "" : c.DateSubmitted.ToString("g"))</td>
-
                 <td>
-                    <form method="post" asp-action="FinalApprove" class="d-inline">
+                    <form method="post" asp-action="Approve" class="d-inline">
                         <input type="hidden" name="id" value="@c.ClaimId" />
-                        <button class="btn btn-sm btn-success">Final Approve</button>
+                        <button class="btn btn-sm btn-success">Approve</button>
                     </form>
 
                     <form method="post" asp-action="Reject" class="d-inline ma-1">
